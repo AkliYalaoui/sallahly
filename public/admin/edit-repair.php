@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../../dist/output.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi+Fun:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <title>Sallahly.dz | Modifier Modeles réparations</title>
+    <title>Sallahly.dz | Modifier réparations</title>
 </head>
 
 <?php
@@ -29,25 +29,19 @@ if (isset($_SESSION['admin_id']) == "") {
 if (isset($_POST['edit_repair'])) {
     $repair_id =
         get_safe_value($conn, $_POST['repair_id']);
-    $device =  get_safe_value($conn, $_POST['device']);
-    $problem =  get_safe_value($conn, $_POST['problem']);
-    $description =  get_safe_value($conn, $_POST['description']);
+    $etat_paiement =  get_safe_value($conn, $_POST['etat_paiement']);
+    $etat_reparation =  get_safe_value($conn, $_POST['etat_reparation']);
     $price =  get_safe_value($conn, $_POST['price']);
 
-    $selectedrepair = mysqli_query($conn, "SELECT * FROM `model_reparation` WHERE  id = '$device'") or die('La requête a échoué');
 
-    if ($device  == "") {
-        $message['error'] = 'Veuillez entrer un modeles!!';
+    $editrepair = mysqli_query($conn, "UPDATE  `reparations` SET etat_paiement='$etat_paiement' , etat_reparation='$etat_reparation',price='$price' WHERE id='$repair_id'") or die('La requête a échoué');
+    if ($editrepair) {
+        $_SESSION['message_success'] = 'Réparation mise à jour avec succès!';
+        header("Location:repairs.php");
+        exit(0);
     } else {
-        $editrepair = mysqli_query($conn, "UPDATE  `model_reparation` SET category_id='$device' , problem='$problem',description='$description',price='$price' WHERE id='$repair_id'") or die('La requête a échoué');
-        if ($editrepair) {
-            $_SESSION['message_success'] = 'Modeles mis à jour avec succès!';
-            header("Location:repear-modes.php");
-            exit(0);
-        } else {
-            $_SESSION['message_error'] = 'Le mis à jour de Modeles à échoué!';
-            exit(0);
-        }
+        $_SESSION['message_error'] = 'Le mis à jour de la réparation à échoué!';
+        exit(0);
     }
 }
 ?>
@@ -77,36 +71,26 @@ if (isset($_POST['edit_repair'])) {
                     if (isset($_GET['id'])) {
                         $repair_id = get_safe_value($conn, $_GET['id']);
                         $selectrepairId =
-                            mysqli_query($conn, "SELECT * FROM `model_reparation` WHERE id='$repair_id'") or die('La requête a échoué');
+                            mysqli_query($conn, "SELECT id, price, etat_paiement, etat_reparation FROM `reparations` WHERE id='$repair_id'") or die('La requête a échoué');
                         if (mysqli_num_rows($selectrepairId) > 0) {
                             $repair = mysqli_fetch_array($selectrepairId);
                     ?>
-                            <form action="" method="POST" id="form-edit-repair" enctype="multipart/form-data" novalidate class="hide-scrollbar flex-auto w-full bg-white p-10 h-auto ">
-                                <div class="flex flex-wrap">
-                                    <div class="xl:w-full lg:w-full md:w-full sm:w-full pr-4 pl-4 w-full">
-                                        <h6 class="mb-2 text-[20px] leading-5 font-bold text-[#5B21B6]">Modifier Modeles réparations</h6>
-                                    </div>
+                            <form action="" method="POST" id="form-edit-repair" class="hide-scrollbar flex-auto w-full bg-white p-10 h-auto ">
+                                <div class="flex flex-col items-center justify-center">
+                                    <h6 class="mb-2 text-[20px] leading-5 font-bold text-[#5B21B6] text-center">Modifier réparations</h6>
                                     <input hidden type="text" name="repair_id" value="<?php echo $repair['id'] ?>">
                                     <div class="xl:w-1/2 lg:w-1/2 md:w-1/2 sm:w-1/2 pr-4 pl-4 w-full">
                                         <div class="mb-4">
                                             <div class="input-control w-full h-auto mb-[20px]">
-                                                <label for="device" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400] text-black">appareil *</label>
-                                                <?php
-                                                $selectCategory = "SELECT id, name FROM categories";
-                                                $allCategories = $conn->query($selectCategory);
-                                                if ($allCategories->num_rows > 0) {
-                                                    $options = mysqli_fetch_all($allCategories, MYSQLI_ASSOC);
-                                                }
-                                                ?>
-
-                                                <select class="cursor-pointer w-full h-auto outline-0 border-[1px] border-[#aaa] rounded-[4px] px-[10px] py-[8px] text-[#212426] shadow-sm appearance-none text-[14px] focus:border-blue-600 focus:drop-shadow-3xl focus:shadow-blue-400" name="device" id="device">
+                                                <label for="etat_paiement" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400] text-black">Etat du paiement</label>
+                                                <select required class="cursor-pointer w-full h-auto outline-0 border-[1px] border-[#aaa] rounded-[4px] px-[10px] py-[8px] text-[#212426] shadow-sm appearance-none text-[14px] focus:border-blue-600 focus:drop-shadow-3xl focus:shadow-blue-400" name="etat_paiement" id="etat_paiement">
                                                     <?php
-                                                    foreach ($options as $option) {
-                                                        if ($option["id"] == $repair["category_id"]) {
+                                                    foreach (["paid", "unpaid"] as $option) {
+                                                        if ($option == $repair["etat_paiement"]) {
                                                     ?>
-                                                            <option value="<?php echo $option['id'] ?>" selected><?php echo $option['name']; ?> </option>
+                                                            <option value="<?php echo $option ?>" selected><?php echo $option; ?> </option>
                                                         <?php } else { ?>
-                                                            <option value="<?php echo $option['id'] ?>"><?php echo $option['name']; ?> </option>
+                                                            <option value="<?php echo $option ?>"><?php echo $option; ?> </option>
                                                     <?php
                                                         }
                                                     }
@@ -118,16 +102,20 @@ if (isset($_POST['edit_repair'])) {
                                     <div class="xl:w-1/2 lg:w-1/2 md:w-1/2 sm:w-1/2 pr-4 pl-4 w-full">
                                         <div class="mb-4">
                                             <div class="input-control w-full h-auto mb-[20px]">
-                                                <label for="problem" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400] text-black">Problème *</label>
-                                                <input type="text" name="problem" id="problem" placeholder="Enter problem" value="<?= $repair["problem"] ?>" class="w-full h-auto outline-0 border-[1px] border-[#aaa] rounded-[4px] px-[10px] py-[8px] text-[#212426] shadow-sm appearance-none text-[14px] focus:border-blue-600 focus:drop-shadow-3xl focus:shadow-blue-400" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="xl:w-1/2 lg:w-1/2 md:w-1/2 sm:w-1/2 pr-4 pl-4 w-full">
-                                        <div class="mb-4">
-                                            <div class="input-control w-full h-auto mb-[20px]">
-                                                <label for="description" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400] text-black">Déscription *</label>
-                                                <input type="text" name="description" id="description" placeholder="Enter déscription" value="<?= $repair["description"] ?>" class="w-full h-auto outline-0 border-[1px] border-[#aaa] rounded-[4px] px-[10px] py-[8px] text-[#212426] shadow-sm appearance-none text-[14px] focus:border-blue-600 focus:drop-shadow-3xl focus:shadow-blue-400" />
+                                                <label for="etat_reparation" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400] text-black">Etat de réparation</label>
+                                                <select required class="cursor-pointer w-full h-auto outline-0 border-[1px] border-[#aaa] rounded-[4px] px-[10px] py-[8px] text-[#212426] shadow-sm appearance-none text-[14px] focus:border-blue-600 focus:drop-shadow-3xl focus:shadow-blue-400" name="etat_reparation" id="etat_reparation">
+                                                    <?php
+                                                    foreach (["en attente", "en cours", "terminé"] as $option) {
+                                                        if ($option == $repair["etat_reparation"]) {
+                                                    ?>
+                                                            <option value="<?php echo $option ?>" selected><?php echo $option; ?> </option>
+                                                        <?php } else { ?>
+                                                            <option value="<?php echo $option ?>"><?php echo $option; ?> </option>
+                                                    <?php
+                                                        }
+                                                    }
+                                                    ?>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -135,7 +123,7 @@ if (isset($_POST['edit_repair'])) {
                                         <div class="mb-4">
                                             <div class="input-control w-full h-auto mb-[20px]">
                                                 <label for="price" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400] text-black">Prix *</label>
-                                                <input type="text" name="price" id="price" placeholder="Enter repair price" value="<?= $repair["price"] ?>" class="w-full h-auto outline-0 border-[1px] border-[#aaa] rounded-[4px] px-[10px] py-[8px] text-[#212426] shadow-sm appearance-none text-[14px] focus:border-blue-600 focus:drop-shadow-3xl focus:shadow-blue-400" />
+                                                <input type="text" name="price" id="price" required placeholder="Enter repair price" value="<?= $repair["price"] ?>" class="w-full h-auto outline-0 border-[1px] border-[#aaa] rounded-[4px] px-[10px] py-[8px] text-[#212426] shadow-sm appearance-none text-[14px] focus:border-blue-600 focus:drop-shadow-3xl focus:shadow-blue-400" />
                                             </div>
                                         </div>
                                     </div>
@@ -144,7 +132,7 @@ if (isset($_POST['edit_repair'])) {
                                 <div class="flex flex-wrap">
                                     <div class="xl:w-full  lg:w-full  md:w-full  sm:w-full pr-4 pl-4 w-full">
                                         <div class="flex items-center gap-3 justify-end">
-                                            <input type="submit" id="edit-repair" name="edit_repair" value="Modifier " class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-7 leading-normal no-underline bg-[#7C3AED] text-white hover:bg-[#5B21B6]">
+                                            <input type="submit" id="edit-repair" name="edit_repair" value="Modifier" class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-7 leading-normal no-underline bg-[#7C3AED] text-white hover:bg-[#5B21B6]">
                                         </div>
                                     </div>
                                 </div>

@@ -27,11 +27,12 @@
         <div class="flex p-6 bg-black w-[600px] max-w-[100%] h-auto max-h-[650px] shadow-md overflow-y-auto overflow-x-hidden rounded-[8px] text-left outline-0 relative px-[100px] hide-scrollbar">
             <a href="register-technicien.php?type=graduated" class="text-[#3b82f6] cursor-pointer flex relative flex-col justify-between min-w-[222px] p-[24px] transition-all nav-link rounded-b-md">
                 <div>
-                    <p class="text-white m-0 text-[16px] font-bold">
+                    <p class="text-white text-center m-0 text-[16px] font-bold">
                         Diplomé&nbsp;!
                     </p>
                     <div class="divider h-1 my-4 bg-[#4B5563] transition-all ease-in duration-300"></div>
-                    <p class="text-[#9CA3AF] m-0 text-[14px] font-[400] leading-[1.4]">
+                    <img src="./assets/degree.svg" alt="college degree icon" />
+                    <p class="text-[#9CA3AF] text-center m-0 text-[14px] font-[400] leading-[1.4] mt-8">
                         Vous avez un diplome ? Rejoignez nous maintenant
                     </p>
                 </div>
@@ -41,12 +42,13 @@
             </a>
             <a href="register-technicien.php?type=non-graduated" class="text-[#3b82f6] cursor-pointer flex relative flex-col justify-between min-w-[222px] p-[24px] transition-all nav-link rounded-b-md">
                 <div>
-                    <p class="text-white m-0 text-[16px] font-bold">
+                    <p class="text-white text-center m-0 text-[16px] font-bold">
                         Non diplomé&nbsp;!
                     </p>
                     <div class="divider h-1 my-4 bg-[#4B5563] transition-all ease-in duration-300"></div>
-                    <p class="text-[#9CA3AF] m-0 text-[14px] font-[400] leading-[1.4]">
-                        Vous n'avez pas un diplome ? Pas de soucis, nous allons vous former
+                    <img src="./assets/resume.svg" alt="resume icon" height="200" width="175" />
+                    <p class="text-[#9CA3AF] text-center m-0 text-[14px] font-[400] leading-[1.4]">
+                        Aucun diplome ? Nous allons vous former
                     </p>
                 </div>
                 <svg width="24" height="24" fill="currentColor" focusable="false" class="m-[0px auto] text-white opacity-0 absolute left-[calc(50%-12px)] bottom-0 transition-all duration-300 ease-in">

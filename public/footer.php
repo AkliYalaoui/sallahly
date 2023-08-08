@@ -9,7 +9,7 @@
                 <h5 class="text-md mt-0 mb-2 text-gray-300">
                     Trouvez-nous sur l'une de ces plateformes, nous répondons 1-2 jours ouvrables.
                 </h5>
-                <div class=" w-full text-center">
+                <div class=" w-full text-center text-white">
                     <p class="leading-normal my-5">UDBKM AINDEFLA.
                         <br>Université Djilali Bounaama de Khemis Miliana
                     </p>
@@ -61,7 +61,7 @@
         <hr class="my-6 border-gray-700">
         <div class="flex flex-wrap items-center md:justify-between justify-center">
             <div class="w-full md:w-4/12 px-4 mx-auto text-center">
-                <div class="text-sm text-blueGray-500 font-semibold py-1">
+                <div class="text-sm text-blueGray-500 font-semibold py-1 text-white">
                     Copyright © <span id="get-current-year">2023</span><a href="https://www.creative-tim.com/product/notus-js" class="text-blue-500 hover:text-blue-600" target="_blank"> Sallahly.dz
                 </div>
             </div>

@@ -42,21 +42,6 @@ if (isset($_POST['delete_cmdRepear'])) {
     }
 }
 
-if (isset($_POST['checkbox'])) {
-    echo $_POST['checkbox'];
-    $repair_id = get_safe_value($conn, $_POST['repair_id']); 
-    $repair_id = intval($repair_id);
-    $editrepair = mysqli_query($conn, "UPDATE  `reparations` SET etat_paiement='paid' WHERE id='$repair_id'") or die('La requête a échoué');
-    if ($editrepair) {
-        $_SESSION['message_success'] = 'Commande payé avec succès!';
-        header("Location: facture.php");
-        exit(0);
-    } else {
-        $_SESSION['message_error'] = 'Le paiement à échoué!';
-        exit(0);
-    }
-}
-
 ?>
 
 <body>
@@ -83,15 +68,17 @@ if (isset($_POST['checkbox'])) {
                                     <th class="relative flex-grow w-1/5 flex-1 px-4">Marque</th>
                                     <th class="relative flex-grow w-1/5 flex-1 px-4">Modéle</th>
                                     <th class="relative flex-grow w-1/5 flex-1 px-4">Description </th>
-                                    <th class="relative flex-grow w-1/5 flex-1 px-4">Type de réparation</th>
+                                    <th class="relative flex-grow w-1/5 flex-1 px-4">Type</th>
+                                    <th class="relative flex-grow w-1/5 flex-1 px-4">Prix</th>
                                     <th class="relative flex-grow w-1/5 flex-1 px-4">Méthode paiment</th>
+                                    <th class="relative flex-grow w-1/5 flex-1 px-4">Eat</th>
                                     <th class="relative flex-grow w-1/5 flex-1 px-4">Payé</th>
                                     <th class="relative flex-grow w-1/5 flex-1 px-4">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="w-full py-2">
                                 <?php
-                                $GetAllCmdrReparations = "SELECT * FROM reparations WHERE etat_paiement='unpaid'";
+                                $GetAllCmdrReparations = "SELECT *, reparations.id as _id FROM reparations INNER JOIN users on users.id = reparations.user_id";
                                 $allcmdrpr = $conn->query($GetAllCmdrReparations);
                                 if ($allcmdrpr->num_rows > 0) {
                                     $cmdRprs = mysqli_fetch_all($allcmdrpr, MYSQLI_ASSOC);
@@ -100,29 +87,24 @@ if (isset($_POST['checkbox'])) {
                                 ?>
                                         <tr class="w-full h-12 py-2">
                                             <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['firstname']; ?> <?php echo $cmdRpr['lastname']; ?></td>
-                                            <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['phone']; ?></td>
+                                            <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['mobile']; ?></td>
                                             <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['brand']; ?></td>
                                             <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['model']; ?></td>
                                             <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['description']; ?></td>
                                             <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['type_repear']; ?></td>
+                                            <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['price']; ?></td>
                                             <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['methode_payment']; ?></td>
+                                            <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['etat_reparation']; ?></td>
                                             <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4">
-                                                <form id="form" method="post" action="">
-                                                    <input hidden type="text" name="repair_id" value="<?php echo $cmdRpr['id']; ?>">
-                                                    <div class="toggle">
-                                                        <?php if ($cmdRpr['etat_paiement'] == "unpaid") :  ?>
-                                                            <input type="checkbox" id="<?php echo $uniqueId; ?>" name="checkbox" onchange="this.form.submit();">
-                                                        <?php else : ?>
-                                                            <input type="checkbox" id="<?php echo $uniqueId; ?>" name="checkbox" onchange="this.form.submit();" checked>
-                                                        <?php endif; ?>
-                                                        <label for="<?php echo $uniqueId; ?>"></label>
-                                                    </div>
-                                                </form>
+                                                <?= $cmdRpr['etat_paiement'] == "paid" ? "Oui" : "Non" ?>
                                             </td>
                                             <td class="relative flex-grow  items-center justify-end text-center">
-                                                <div class="w-full h-full px-2 py-1 flex items-center justify-between">
+                                                <div class="w-full h-full px-2 py-1 flex flex-col items-center justify-between">
+                                                    <a href="edit-repair.php?id=<?= $cmdRpr['_id']; ?>" class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-10 leading-normal no-underline bg-[#06B6D4] text-white hover:bg-[#0E7490]">
+                                                        Modifier
+                                                    </a>
                                                     <form method="POST" action="">
-                                                        <button class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-10 leading-normal no-underline bg-[#FB7185] text-white hover:bg-[#E11D48]" type="submit" name="delete_cmdRepear" value="<?= $cmdRpr['id']; ?>">
+                                                        <button class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-10 leading-normal no-underline bg-[#FB7185] text-white hover:bg-[#E11D48]" type="submit" name="delete_cmdRepear" value="<?= $cmdRpr['_id']; ?>">
                                                             Supprimer
                                                         </button>
                                                     </form>

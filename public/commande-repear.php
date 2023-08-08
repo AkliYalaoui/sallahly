@@ -32,27 +32,24 @@ if (isset($_SESSION['user_id']) == "") {
 if (isset($_POST['commande_repear'])) {
 
     if (isset($_SESSION['user_id']) != "") {
-
+        
+        $user_id = $_SESSION['user_id'];
         $brand = get_safe_value($conn, $_POST['brand']);
         $model = get_safe_value($conn, $_POST['model']);
-        $firstname = get_safe_value($conn, $_POST['firstname']);
-        $lastname = get_safe_value($conn, $_POST['lastname']);
-        $email = get_safe_value($conn, $_POST['email']);
-        $phone = get_safe_value($conn, $_POST['phone']);
         $message = get_safe_value($conn, $_POST['description']);
         $pmode = get_safe_value($conn, $_POST['methode_pay']);
         $check = get_safe_value($conn, $_POST['methode_repear']);
 
 
-        if ($firstname == "" || $lastname == "" || $email == "" || $message == "" || $phone == "" || $check == '') {
+        if ($brand == "" || $model == "" || $message == "" || $pmode == "" || $check == '') {
             $message['error'] = 'Veuillez remplir tout les champs svp!';
         } else {
-            $query = "INSERT INTO `reparations`(brand,model,type_repear	,firstname	,lastname,	email,	phone,description,methode_payment) VALUES ('$brand','$model','$check','$firstname','$lastname','$email','$phone','$message','$pmode')";
+            $query = "INSERT INTO `reparations`(brand,model,type_repear,user_id,description,methode_payment) VALUES ('$brand','$model','$check','$user_id','$message','$pmode')";
 
             $sendCmdRepear = mysqli_query($conn, $query) or die('La requête a échoué');
             if ($sendCmdRepear) {
                 $_SESSION['message_success'] = 'Merci! Votre commande de réparation envoyer avec succès! ';
-                header("Location:home.php");
+                header("Location: commande.php");
                 exit(0);
             } else {
                 $_SESSION['message_error'] = 'La commande de réparation n`est pas envoyer dsl!';
@@ -130,24 +127,6 @@ if (isset($_POST['commande_repear'])) {
                             <option value="Batterie">Batterie </option>
                             <option value="autre">Autre choix </option>
                         </select>
-                    </div>
-                    <div class="relative">
-                        <label for="firstname" class="mt-4 mb-2 block text-sm font-medium">Nom du client*</label> <input type="text" id="firstname" name="firstname" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="your firstname" />
-                    </div>
-
-                    <div class="relative">
-
-                        <label for="lastname" class="mt-4 mb-2 block text-sm font-medium">Prénom du client*</label> <input type="text" id="lastname" name="lastname" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="your lastname" />
-                    </div>
-
-                    <div class="relative">
-                        <label for="email" class="mt-4 mb-2 block text-sm font-medium">E-mail du client*</label>
-                        <input type="text" id="email" name="email" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="your.email@gmail.com" />
-                    </div>
-
-                    <div class="relative">
-
-                        <label for="phone" class="mt-4 mb-2 block text-sm font-medium">Telephone N°</label> <input type="text" id="phone" name="phone" class="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500" placeholder="Your.Phone number" />
                     </div>
                     <div class="relative">
                         <label for="description" class="mt-4 mb-2 block text-sm font-medium">Commentaires</label>

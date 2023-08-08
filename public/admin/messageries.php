@@ -58,34 +58,36 @@ if (isset($_POST['delete_message'])) {
                         <h1 class="text-[20px] font-bold">Gérer tous les messages des clients</h1>
                     </div>
 
-                    <div class="container w-full max-h-[500px] hide-scrollbar  cursor-pointer mt-10 mb-10 bg-white border-[1px] rounded-[4px] gap-3 border-gray-300 mx-auto">
+                    <div class="container w-full max-h-[500px] hide-scrollbar mt-10 mb-10 bg-white border-[1px] rounded-[4px] gap-3 border-gray-300 mx-auto">
                         <table class="w-full max-w-full mb-4 max-h-[500px] hide-scrollbar  bg-transparent table-bordered">
                             <thead class="w-full font-semibold h-12 bg-[#7b7b8a] sticky z-[100]  top-0 left-0 text-white rounded-[4px] ">
                                 <tr class="w-full h-full rounded-[4px]">
-                                    <th class="relative flex-grow w-1/5 flex-1 px-4">ID</th>
                                     <th class="relative flex-grow w-1/5 flex-1 px-4">Client</th>
-                                    <th class="relative flex-grow w-1/5 flex-1 px-4">Email</th>
+                                    <th class="relative flex-grow w-1/5 flex-1 px-4">E-mail</th>
+                                    <th class="relative flex-grow w-1/5 flex-1 px-4">Sujet</th>
                                     <th class="relative flex-grow w-1/5 flex-1 px-4">Message</th>
+                                    <th class="relative flex-grow w-1/5 flex-1 px-4">Envoyé le </th>
                                     <th class="relative flex-grow w-1/5 flex-1 px-4">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="w-full py-2">
                                 <?php
-                                $GetAllmessage = "SELECT * FROM messageries";
+                                $GetAllmessage = "SELECT *, messageries.id as _id FROM messageries INNER JOIN users on users.id = user_id";
                                 $allmessage = $conn->query($GetAllmessage);
                                 if ($allmessage->num_rows > 0) {
                                     $message = mysqli_fetch_all($allmessage, MYSQLI_ASSOC);
                                     foreach ($message as $message) {
                                 ?>
                                         <tr class="w-full h-12 py-2">
-                                            <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?= $message['id']; ?></td>
-                                            <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?= $message['fullname']; ?></td>
+                                            <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?= $message['firstname'] . " " . $message["lastname"]; ?></td>
                                             <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?= $message['email']; ?></td>
+                                            <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?= $message['subject']; ?></td>
                                             <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?= $message['message']; ?></td>
+                                            <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?= $message['sent_at']; ?></td>
                                             <td class="relative flex-grow  items-center justify-end text-center">
                                                 <div class="w-full h-full px-2 py-1 flex items-center justify-between">
                                                     <form method="POST" action="">
-                                                        <button class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-10 leading-normal no-underline bg-[#FB7185] text-white hover:bg-[#E11D48]" type="submit" name="delete_message" value="<?= $message['id']; ?>">
+                                                        <button class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-10 leading-normal no-underline bg-[#FB7185] text-white hover:bg-[#E11D48]" type="submit" name="delete_message" value="<?= $message['_id']; ?>">
                                                             Supprimer
                                                         </button>
                                                     </form>

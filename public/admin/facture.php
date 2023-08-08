@@ -72,7 +72,7 @@ if (isset($_POST['delete_cmdRepear'])) {
                             </thead>
                             <tbody class="w-full py-2">
                                 <?php
-                                $GetAllCmdrReparations = "SELECT * FROM reparations WHERE etat_paiement='paid'";
+                                $GetAllCmdrReparations = "SELECT *, reparations.id as _id FROM reparations INNER JOIN users ON users.id = reparations.user_id WHERE etat_paiement='paid'";
                                 $allcmdrpr = $conn->query($GetAllCmdrReparations);
                                 if ($allcmdrpr->num_rows > 0) {
                                     $cmdRprs = mysqli_fetch_all($allcmdrpr, MYSQLI_ASSOC);
@@ -85,11 +85,11 @@ if (isset($_POST['delete_cmdRepear'])) {
                                             <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['methode_payment']; ?></td>
                                             <td class="relative flex-grow  items-center justify-end text-center">
                                                 <div class="w-full h-full px-2 py-1 flex items-center justify-between">
-                                                    <a href="print-invoice.php?id=<?= $cmdRpr['id']; ?>" class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-10 leading-normal no-underline bg-[#06B6D4] text-white hover:bg-[#0E7490]">
+                                                    <a href="print-invoice.php?id=<?= $cmdRpr['_id']; ?>" class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-10 leading-normal no-underline bg-[#06B6D4] text-white hover:bg-[#0E7490]">
                                                         Imprimer
                                                     </a>
                                                     <form method="POST" action="">
-                                                        <button class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-10 leading-normal no-underline bg-[#FB7185] text-white hover:bg-[#E11D48]" type="submit" name="delete_cmdRepear" value="<?= $cmdRpr['id']; ?>">
+                                                        <button class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-10 leading-normal no-underline bg-[#FB7185] text-white hover:bg-[#E11D48]" type="submit" name="delete_cmdRepear" value="<?= $cmdRpr['_id']; ?>">
                                                             Supprimer
                                                         </button>
                                                     </form>

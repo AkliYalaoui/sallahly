@@ -79,7 +79,7 @@ if (isset($_POST['add_repair'])) {
                             <div class="xl:w-1/2 lg:w-1/2 md:w-1/2 sm:w-1/2 pr-4 pl-4 w-full">
                                 <div class="mb-4">
                                     <div class="input-control w-full h-auto mb-[20px]">
-                                        <label for="category" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400]">appareil *</label>
+                                        <label for="category" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400] text-black">appareil *</label>
                                         <?php
                                         $selectCategory = "SELECT id, name FROM categories";
                                         $allCategories = $conn->query($selectCategory);
@@ -104,7 +104,7 @@ if (isset($_POST['add_repair'])) {
                             <div class="xl:w-1/2 lg:w-1/2 md:w-1/2 sm:w-1/2 pr-4 pl-4 w-full">
                                 <div class="mb-4">
                                     <div class="input-control w-full h-auto mb-[20px]">
-                                        <label for="problem" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400]">Problème *</label>
+                                        <label for="problem" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400] text-black">Problème *</label>
                                         <input type="text" name="problem" id="problem" placeholder="Enter problem" class="w-full h-auto outline-0 border-[1px] border-[#aaa] rounded-[4px] px-[10px] py-[8px] text-[#212426] shadow-sm appearance-none text-[14px] focus:border-blue-600 focus:drop-shadow-3xl focus:shadow-blue-400" />
                                     </div>
                                 </div>
@@ -112,7 +112,7 @@ if (isset($_POST['add_repair'])) {
                             <div class="xl:w-1/2 lg:w-1/2 md:w-1/2 sm:w-1/2 pr-4 pl-4 w-full">
                                 <div class="mb-4">
                                     <div class="input-control w-full h-auto mb-[20px]">
-                                        <label for="description" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400]">Déscription *</label>
+                                        <label for="description" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400] text-black">Déscription *</label>
                                         <input type="text" name="description" id="description" placeholder="Enter déscription" class="w-full h-auto outline-0 border-[1px] border-[#aaa] rounded-[4px] px-[10px] py-[8px] text-[#212426] shadow-sm appearance-none text-[14px] focus:border-blue-600 focus:drop-shadow-3xl focus:shadow-blue-400" />
                                     </div>
                                 </div>
@@ -121,7 +121,7 @@ if (isset($_POST['add_repair'])) {
                             <div class="xl:w-1/2 lg:w-1/2 md:w-1/2 sm:w-1/2 pr-4 pl-4 w-full">
                                 <div class="mb-4">
                                     <div class="input-control w-full h-auto mb-[20px]">
-                                        <label for="price" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400]">Prix *</label>
+                                        <label for="price" class="text-[#4b5563] text-[14px] mb-[10px] block font-[400] text-black">Prix *</label>
                                         <input type="text" name="price" id="price" placeholder="Enter repair price" class="w-full h-auto outline-0 border-[1px] border-[#aaa] rounded-[4px] px-[10px] py-[8px] text-[#212426] shadow-sm appearance-none text-[14px] focus:border-blue-600 focus:drop-shadow-3xl focus:shadow-blue-400" />
                                     </div>
                                 </div>

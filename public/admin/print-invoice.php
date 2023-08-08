@@ -16,7 +16,7 @@ if (isset($_SESSION['admin_id']) == "") {
 
 if (isset($_GET['id'])) {
     $id = get_safe_value($conn, $_GET['id']);
-    $query = mysqli_query($conn, "select * from reparations where id='$id'");
+    $query = mysqli_query($conn, "SELECT *, reparations.id as _id FROM reparations INNER JOIN users ON users.id = reparations.user_id WHERE reparations.id='$id'");
 
     // Create a PDF instance
     $pdf = new PDF('P', 'mm', "A4");
@@ -33,7 +33,7 @@ if (isset($_GET['id'])) {
         $pdf->Cell(40, 10, 'Email:', 0, 0, 'L');
         $pdf->Cell(0, 10, $data["email"], 0, 1, 'L');
         $pdf->Cell(40, 10, 'Telephone:', 0, 0, 'L');
-        $pdf->Cell(0, 10, $data["phone"], 0, 1, 'L');
+        $pdf->Cell(0, 10, $data["mobile"], 0, 1, 'L');
         $pdf->Ln(10);
 
         // Add product information
@@ -41,7 +41,7 @@ if (isset($_GET['id'])) {
         $pdf->Cell(0, 10, 'Information de la commande', 0, 1, 'L');
         $pdf->SetFont('Arial', '', 12);
         $pdf->Cell(40, 10, 'ID:', 0, 0, 'L');
-        $pdf->Cell(0, 10, $data["id"], 0, 1, 'L');
+        $pdf->Cell(0, 10, $data["_id"], 0, 1, 'L');
         $pdf->Cell(40, 10, 'Marque:', 0, 0, 'L');
         $pdf->Cell(0, 10, $data["brand"], 0, 1, 'L');
         $pdf->Cell(40, 10, 'Modele:', 0, 0, 'L');
@@ -53,7 +53,7 @@ if (isset($_GET['id'])) {
         $pdf->Cell(40, 10, 'Paiement:', 0, 0, 'L');
         $pdf->Cell(0, 10, $data["methode_payment"], 0, 1, 'L');
         $pdf->Cell(40, 10, 'Prix:', 0, 0, 'L');
-        $pdf->Cell(0, 10, "2000 DA", 0, 1, 'L');
+        $pdf->Cell(0, 10, $data["price"], 0, 1, 'L');
         $pdf->Cell(40, 10, 'Date:', 0, 0, 'L');
         $pdf->Cell(0, 10, $data["created_at"], 0, 1, 'L');
     }

@@ -15,27 +15,29 @@
 
 <?php
 include "../server/config.php";
+include "../server/functions/functions.inc.php";
+
 session_start();
 if (isset($_SESSION['user_id']) == "") {
     header("Location: login.php");
 }
 
-$total_cost = 0;
-$allItems = '';
-$items = array();
-$shipping = 500;
-
-$AllCartItems = "SELECT CONCAT(product_name,'  X','(',qty,')') AS ItemQty, total_price FROM cart ";
-$query = $conn->prepare($AllCartItems);
-$query->execute();
-
-$result = $query->get_result();
-while ($row = $result->fetch_assoc()) {
-    $total_cost += $row['total_price'];
-    $items[] = $row['ItemQty'];
+if (isset($_POST['delete_cmdRepear'])) {
+    $cmdrep_id =
+        get_safe_value($conn, $_POST['delete_cmdRepear']);
+    $user_id = $_SESSION['user_id'];
+    $selectedcmdRpr = mysqli_query($conn, "DELETE FROM `reparations` WHERE id = '$cmdrep_id' AND user_id='$user_id'") or die('La requête a échoué');
+    if ($selectedcmdRpr) {
+        $_SESSION['message_success'] = 'Commande Supprimer avec succès!';
+        header("Location: commande.php");
+        exit();
+    } else {
+        $_SESSION['message_error'] = 'La Suppression du Commande à échoué!';
+        exit();
+    }
 }
-$allItems = implode(", ", $items);
-$total_amount = $total_cost + $shipping;
+
+
 ?>
 
 <body>
@@ -46,101 +48,67 @@ $total_amount = $total_cost + $shipping;
         <!-- commandes container -->
         <div class="w-full h-full container mx-auto ">
             <div class="w-[998px] container mx-auto overflow-hidden">
-                <div class="flex shadow-md my-10">
-                    <div class="w-3/4 bg-white px-10 py-10">
-                        <div class="flex justify-between border-b pb-8">
-                            <h1 class="font-semibold text-2xl">Mes Commandes</h1>
+                <h1 class="text-center text-[20px] font-bold mt-10 mb-4">Mes Commandes</h1>
+                <div class="block mb-8 text-[16px] leading-3 text-right text-white opacity-[0.9]">
+                    <a class="bg-blue-600 hover:bg-blue-400 text-center px-6 py-2 rounded-[4px] text-white text-md" style="visibility: visible; cursor: pointer;" href="commande-repear.php" data-color-override="false" data-hover-color-override="false" data-hover-text-color-override="#fff"><span>Ajouter une commande</span></a>
+                </div>
+                <div class="relative container w-full max-h-[500px] hide-scrollbar mb-10 bg-white border-[1px] rounded-[4px] gap-3 border-gray-300 mx-auto">
+                    <table class="w-full max-w-full mb-4 max-h-[500px] hide-scrollbar  bg-transparent table-bordered">
+                        <thead class="w-full font-semibold h-12 bg-[#7b7b8a] sticky  top-0 left-0 text-white rounded-[4px] ">
+                            <tr class="w-full h-full rounded-[4px]">
+                                <th class="relative flex-grow w-1/5 flex-1 px-4">Marque</th>
+                                <th class="relative flex-grow w-1/5 flex-1 px-4">Modéle</th>
+                                <th class="relative flex-grow w-1/5 flex-1 px-4">Description </th>
+                                <th class="relative flex-grow w-1/5 flex-1 px-4">Type</th>
+                                <th class="relative flex-grow w-1/5 flex-1 px-4">Prix</th>
+                                <th class="relative flex-grow w-1/5 flex-1 px-4">Méthode paiment</th>
+                                <th class="relative flex-grow w-1/5 flex-1 px-4">Eat</th>
+                                <th class="relative flex-grow w-1/5 flex-1 px-4">Payé</th>
+                                <th class="relative flex-grow w-1/5 flex-1 px-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="w-full py-2">
                             <?php
-                            if (isset($_SESSION['user_id'])) {
-                                $user_id = $_SESSION['user_id'];
-                            }
-                            $GetItemsOrder = "SELECT * FROM cart WHERE user_id='$user_id'";
-                            $allItemOrders = $conn->query($GetItemsOrder);
-                            $numberItems = mysqli_num_rows($allItemOrders);
-                            echo
-                            '<h2 class="font-semibold text-2xl">' . $numberItems . '  Articles</h2>'
-
-                            ?>
-                        </div>
-                        <div class="flex mt-10 mb-5">
-                            <h3 class="font-semibold text-gray-600 text-xs uppercase w-2/5">Details Produits</h3>
-                            <h3 class="font-semibold text-gray-600 text-xs uppercase w-1/5 text-center">Quantité</h3>
-                            <h3 class="font-semibold text-gray-600 text-xs uppercase w-1/5 text-center">Prix</h3>
-                            <h3 class="font-semibold text-gray-600 text-xs uppercase w-1/5 text-center">Total article</h3>
-
-                        </div>
-
-                        <?php
-                        if (isset($_SESSION['user_id'])) {
                             $user_id = $_SESSION['user_id'];
-                        }
+                            $GetAllCmdrReparations = "SELECT * FROM reparations WHERE user_id ='$user_id' ";
+                            $allcmdrpr = $conn->query($GetAllCmdrReparations);
+                            if ($allcmdrpr->num_rows > 0) {
+                                $cmdRprs = mysqli_fetch_all($allcmdrpr, MYSQLI_ASSOC);
+                                foreach ($cmdRprs as $cmdRpr) {
+                                    $uniqueId = "toggleSwitch_" . $cmdRpr['id'];
+                            ?>
+                                    <tr class="w-full h-12 py-2">
+                                        <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['brand']; ?></td>
+                                        <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['model']; ?></td>
+                                        <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['description']; ?></td>
+                                        <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['type_repear']; ?></td>
+                                        <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['price']; ?></td>
+                                        <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['methode_payment']; ?></td>
+                                        <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4"><?php echo $cmdRpr['etat_reparation']; ?></td>
+                                        <td class="relative flex-grow w-1/5 items-center justify-center text-center flex-1 px-4">
+                                            <?= $cmdRpr['etat_paiement'] == "paid" ? "Oui" : "Non" ?>
+                                        </td>
+                                        <td class="relative flex-grow  items-center justify-end text-center">
+                                            <div class="w-full h-full px-2 py-1 flex flex-col items-center justify-between">
+                                                <form method="POST" action="">
+                                                    <button class="inline-block align-middle text-center select-none cursor-pointer border font-semibold text-[14px] whitespace-no-wrap rounded-md py-3 px-10 leading-normal no-underline bg-[#FB7185] text-white hover:bg-[#E11D48]" type="submit" name="delete_cmdRepear" value="<?= $cmdRpr['id']; ?>">
+                                                        Annuler
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
 
-                        $stmt = $conn->prepare("SELECT * FROM cart WHERE user_id='$user_id' ");
-                        $stmt->execute();
-                        $qty = 0;
-                        $result = $stmt->get_result();
-                        while ($row = $result->fetch_assoc()) :
-                            $total = $row['qty'] * $row['total_price'];
-                        ?>
-                            <div class="flex items-center hover:bg-gray-100 -mx-8 px-6 py-5">
-                                <div class="flex w-2/5"> <!-- product -->
-                                    <div class="w-20">
-                                        <?php echo ' <img class="h-24 w-24 object-cover" src="/Sallahly/public/uploads/' . $row['product_image'] . ' " alt="image_categorie" alt="">' ?>
-                                    </div>
-                                    <div class=" flex items-center ml-4 flex-grow">
-                                        <span class="font-bold text-sm"><?= $row['product_name'] ?></span>
-
-                                    </div>
-                                </div>
-
-                                <span class="text-center w-1/5 font-semibold text-sm"><?= number_format($row['qty']) ?> Articles commandée</span>
-                                <span class="text-center w-1/5 font-semibold text-sm"><?= number_format($row['product_price'], 2) ?> DA</span>
-
-                                <span class="text-center w-1/5 font-semibold text-sm"><?= number_format($row['qty'] * $row['product_price'], 2) ?> DA</span>
-
-                                <span class="text-center w-1/5 font-semibold text-sm"><?= number_format($total, 2) ?> DA</span>
-                            </div>
-                        <?php endwhile; ?>
-                        <a href="home.php" class="flex font-semibold text-indigo-600 text-sm mt-10">
-
-                            <svg class="fill-current mr-2 text-indigo-600 w-4" viewBox="0 0 448 512">
-                                <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
-                            </svg>
-                            Continuer vos achats
-                        </a>
-                    </div>
-                    <?php
-                    if (isset($_SESSION['user_id'])) {
-                        $user_id = $_SESSION['user_id'];
-                    }
-
-                    $stmt = $conn->prepare("SELECT * FROM cart WHERE user_id='$user_id' ");
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $cout_total = 0;
-                    $numberItems = mysqli_num_rows($result);
-                    while ($row = $result->fetch_assoc()) :
-
-                    ?>
-                    <?php endwhile; ?>
-                    <div id="summary" class="w-1/4 px-2 py-10">
-                        <h1 class="font-semibold text-2xl border-b pb-8">Commande</h1>
-                        <div class=" mt-4">
-                            <div class="flex font-semibold justify-between py-6 text-sm uppercase">
-                                <span>Montant Total </span>
-                                <?php
-                                if ($numberItems > 0) {
-                                    echo ' <span>' . number_format($total_amount, 2) . ' DA</span>';
-                                } else {
-                                    echo ' <span>' . number_format(0, 2) . ' DA</span>';
+                            <?php
                                 }
-                                ?>
-                            </div>
-                        </div>
-                    </div>
+                            } else {
+                                echo "<p class='p-4'>Aucune commande à afficher</p>";
+                            }
+                            ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="w-full text-center font-semibold">Livraison en Alger gratuit, Autre Willaya 500 DA</div>
         </div>
     </div>
     <?php include "footer.php" ?>
